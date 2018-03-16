@@ -1,7 +1,7 @@
 <root>
-<files>
-<file>file1.html</file>
-<file>file3.html</file>
-<file>file4.html</file>
-</files>
+	<files>
+		<file>file1.html</file>
+		<file>file3.html</file>
+		<file>file4.html</file>
+	</files>
 </root>
