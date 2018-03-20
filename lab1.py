@@ -61,9 +61,7 @@ class LabTest(unittest.TestCase):
 
     def testGetMP3(self):
         # init
-        self.maxDiff = None
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        print current_dir
         file1 = '''
             <!DOCTYPE html>
             <html>
