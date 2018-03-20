@@ -45,8 +45,9 @@ class LabTest(unittest.TestCase):
             'file://%s/music/Muse–Psycho.mp3' % current_dir,
             'file://%s/music/Imagine_Dragon–Demons.mp3' % current_dir,
             'file://%s/music/Red_Hot_Chili_Peppers_-_Snow.mp3' % current_dir,
+            'https://www.mfiles.co.uk/mp3-downloads/moonlight-movement1.mp3',
             ]
-          
+
         expected = [
             'file://%s/music/Muse–Psycho.mp3' % current_dir,
             'file://%s/music/Imagine_Dragon–Demons.mp3' % current_dir,
@@ -57,7 +58,7 @@ class LabTest(unittest.TestCase):
 
         result = parser.filterMP3(files, 'Rock').sort()
         self.assertEqual(result, expected)
-        
+
     def testGetMP3(self):
         # init
         self.maxDiff = None
