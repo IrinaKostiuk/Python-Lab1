@@ -46,13 +46,11 @@ class LabTest(unittest.TestCase):
             'file://%s/music/Imagine_Dragon–Demons.mp3' % current_dir,
             'file://%s/music/Red_Hot_Chili_Peppers_-_Snow.mp3' % current_dir,
             ].sort()
-        
+
         parser = LabImpl()
 
         result = parser.filterMP3(files, 'Rock').sort()
         self.assertEqual(result, expected)
-
-        
 
 
 class LabImpl:
@@ -63,19 +61,19 @@ class LabImpl:
         files = [node.childNodes[0].data for node in nodes]
         return files
 
-    def filterMP3(self,listMP3,genre):
+    def filterMP3(self, listMP3, genre):
         result = []
         for nameMP3 in listMP3:
-            if (nameMP3[:4]!="file"):
+            if (nameMP3[:4] != "file"):
                 mp3 = urllib2.urlopen(nameMP3)
                 mp3_content = mp3.read()
-                output = open('__tmp__','w')
+                output = open('__tmp__', 'w')
                 output.write(mp3_content)
                 output.close()
-                
+
                 # filter genre
                 if (ID3('__tmp__')['TCON'].text[0].encode('utf-8') == genre):
-                    result.append(genre)  
+                    result.append(genre)
             else:
                 if (ID3(nameMP3[7:])['TCON'].text[0].encode('utf-8') == genre):
                     result.append(genre)
