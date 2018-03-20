@@ -47,6 +47,9 @@ class LabTest(unittest.TestCase):
             'file://%s/music/Red_Hot_Chili_Peppers_-_Snow.mp3' % current_dir,
             'https://www.mfiles.co.uk/mp3-downloads/moonlight-movement1.mp3',
             ]
+        files2 = [
+            'https://www.mfiles.co.uk/mp3-downloads/moonlight-movement1.mp3',
+            ]
 
         expected = [
             'file://%s/music/Muse–Psycho.mp3' % current_dir,
@@ -57,7 +60,10 @@ class LabTest(unittest.TestCase):
         parser = LabImpl()
 
         result = parser.filterMP3(files, 'Rock').sort()
+        result2 = parser.filterMP3(files2, 'Classical')
+
         self.assertEqual(result, expected)
+        self.assertEqual(result2, files2)
 
     def testGetMP3(self):
         # init
@@ -69,7 +75,7 @@ class LabTest(unittest.TestCase):
                 <title>file1</title>
             </head>
             <body>
-                 <a href="file://{0}/file2.html"></a>
+                 <a href="file2.html"></a>
             </body>
             </html>
             '''.format(current_dir)
@@ -80,6 +86,7 @@ class LabTest(unittest.TestCase):
                 <title>file2</title>
             </head>
             <body>
+                <a href="file://{0}/file4.html"
                 <a href="file://{0}/music/Eminem–LoseYourself.mp3"></a>
                 <a href="file://{0}/music/Muse–Psycho.mp3"></a>
             </body>
@@ -92,7 +99,7 @@ class LabTest(unittest.TestCase):
                 <title>file3</title>
             </head>
             <body>
-                <a href="file://{0}/music/Imagine_Dragon–Demons.mp3"></a>
+                <a href="music/Imagine_Dragon–Demons.mp3"></a>
             </body>
             </html>
             '''.format(current_dir)
@@ -160,7 +167,7 @@ class LabImpl:
     def filterMP3(self, listMP3, genre):
         result = []
         for nameMP3 in listMP3:
-            if (nameMP3[:4] != "file"):
+            if (nameMP3[:5] != "file:"):
                 mp3 = urllib2.urlopen(nameMP3)
                 mp3_content = mp3.read()
                 output = open('__tmp__', 'w')
@@ -169,10 +176,10 @@ class LabImpl:
 
                 # filter genre
                 if (ID3('__tmp__')['TCON'].text[0].encode('utf-8') == genre):
-                    result.append(genre)
+                    result.append(nameMP3)
             else:
                 if (ID3(nameMP3[7:])['TCON'].text[0].encode('utf-8') == genre):
-                    result.append(genre)
+                    result.append(nameMP3)
         return result
 
     def getMP3(self, files, depth):
@@ -184,9 +191,21 @@ class LabImpl:
             if (level < depth):
                 for f in file_pattern.findall(content):
                     if (f not in visited):
-                        collect(f[6:-1], level + 1)
+                        name = f[6:-1]
+                        pr = name[:5]
+                        if (pr == 'file:' or pr == 'http:' or pr == 'https'):
+                            collect(name, level + 1)
+                        else:
+                            base = file[:file.rfind('/') + 1]
+                            collect(base + name, level + 1)
             for mp3 in mp3_pattern.findall(content):
-                result.append(mp3[6:-1])
+                name = mp3[6:-1]
+                prot = name[:5]
+                if (prot == 'file:' or prot == 'http:' or prot == 'https'):
+                    result.append(name)
+                else:
+                    base = file[:file.rfind('/') + 1]
+                    result.append(base + name)
 
         file_pattern = re.compile(r'href="[^"]+\.x?html?"')
         mp3_pattern = re.compile(r'href="[^"]+\.mp3"')
@@ -195,6 +214,7 @@ class LabImpl:
         for file in files:
             collect(file, 0)
         return list(set(result))
+
 
 if __name__ == '__main__':
     unittest.main()
