@@ -21,9 +21,9 @@ class LabTest(unittest.TestCase):
         file = '__tmp__'
         with open(file, 'w') as f:
             f.write(xml)
-        parser = LabImpl(file)
+        parser = LabImpl()
         # work
-        files = parser.getFiles()
+        files = parser.getFiles(file)
         # test
         self.assertEqual(files, expected)
         # cleanup
@@ -32,11 +32,8 @@ class LabTest(unittest.TestCase):
 
 class LabImpl:
 
-    def __init__(self, file):
-        self.file = file
-
-    def getFiles(self):
-        xml = parse(self.file)
+    def getFiles(self, file):
+        xml = parse(file)
         nodes = xml.getElementsByTagName('file')
         files = [node.childNodes[0].data for node in nodes]
         return files
