@@ -5,7 +5,7 @@ run: ${OBJ}
 	python ${OBJ}
 
 stat: ${OBJ}
-	pep8 -v ${OBJ} > pep8
+	pycodestyle -v ${OBJ} > pep8 || \
 	coverage run ${OBJ}
 	coverage report -m > coverage
 
