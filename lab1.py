@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from xml.dom.minidom import parse
+from xml.dom.minidom import parse, Document, parseString
 import unittest
 import sys
 import os
@@ -155,6 +155,21 @@ class LabTest(unittest.TestCase):
             i = i - 1
             os.remove('file%d.html' % i)
 
+    def testOutput(self):
+            filesMP3 = [
+                'Eminem–LoseYourself.mp3',
+                'Muse–Psycho.mp3',
+                'Imagine_Dragon–Demons.mp3'
+                ]
+            parser = LabImpl()
+            # work
+            parser.output(filesMP3, 'output.xml', 'Rock')
+            with open('output.xml') as f:
+                content = f.read()
+                length = len(content)
+            # test
+            self.assertEqual(len, 193)
+
 
 class LabImpl:
 
@@ -214,6 +229,26 @@ class LabImpl:
         for file in files:
             collect(file, 0)
         return list(set(result))
+
+    def output(self, files, out, genre):
+        doc = Document()
+        root = doc.createElement('root')
+        doc.appendChild(root)
+
+        ganre = doc.createElement('genre')
+        kindG = doc.createTextNode(genre)
+        ganre.appendChild(kindG)
+        root.appendChild(ganre)
+
+        f = doc.createElement('files')
+        root.appendChild(f)
+
+        for el in files:
+            node = doc.createElement('file')
+            f.appendChild(node)
+            text = doc.createTextNode(el)
+            node.appendChild(text)
+        doc.writexml(open(out, 'w'), encoding='utf-8')
 
 
 if __name__ == '__main__':
